@@ -1,0 +1,172 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#060b14"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="PetaTag">
+<title>PetaTag</title>
+<style>
+:root{box-sizing:border-box;color-scheme:dark;--bg:#060b14;--fg:#e6f6ff;--card:#0c1626;--ac:#22d3ee;--on:#04222b;--mut:#7f9bb0;--bd:#1e3550;--rd:#f43f5e;--ok:#34d399;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%;margin:0}
+body{position:relative;background:var(--bg);color:var(--fg);font:15px system-ui,sans-serif;overflow:hidden}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gl{background:#0a1220c4;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #22d3ee40;box-shadow:0 6px 24px #000a,inset 0 0 22px #22d3ee0f}
+#stage{position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,#0f2036,#060b14 72%)}
+#stage:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#22d3ee14 1px,transparent 1px),linear-gradient(90deg,#22d3ee14 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+header{position:absolute;left:10px;right:10px;top:10px;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:18px;z-index:3}
+.ib{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#22d3ee,#3b82f6);color:var(--on);cursor:pointer;flex:none;box-shadow:0 0 14px #22d3ee66}
+.ti{flex:1;min-width:0}#mt{font-weight:650;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#st{font:600 10.5px ui-monospace,monospace;letter-spacing:.1em;color:var(--mut);margin-top:2px}#st.ok{color:var(--ok)}
+#gb{font:700 10px ui-monospace,monospace;letter-spacing:.12em;padding:5px 9px;border-radius:20px;border:1px solid var(--bd);color:var(--mut)}#gb.on{color:var(--ok);border-color:var(--ok);box-shadow:0 0 10px #34d39955}
+#cross{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;pointer-events:none;display:none}
+#cross:before{content:"";position:absolute;inset:0;border:1.5px solid var(--ac);border-radius:50%;box-shadow:0 0 12px #22d3ee88,inset 0 0 12px #22d3ee44}
+#cross:after{content:"";position:absolute;left:29px;top:29px;width:6px;height:6px;background:var(--rd);border-radius:50%;box-shadow:0 0 8px var(--rd)}
+#cross i{position:absolute;background:var(--ac);box-shadow:0 0 6px var(--ac)}
+#cross i:nth-child(1){left:31px;top:-12px;width:2px;height:20px}#cross i:nth-child(2){left:31px;bottom:-12px;width:2px;height:20px}
+#cross i:nth-child(3){top:31px;left:-12px;height:2px;width:20px}#cross i:nth-child(4){top:31px;right:-12px;height:2px;width:20px}
+#ctl{position:absolute;right:12px;top:calc(50% - 130px);display:flex;flex-direction:column;gap:10px;align-items:center;z-index:3}
+.c{width:48px;height:48px;border-radius:50%;border:1px solid #22d3ee50;background:#0a1220d0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--ac);font:500 24px ui-monospace,monospace;box-shadow:0 4px 16px #000a;cursor:pointer;padding:0;display:grid;place-items:center}
+.c.on{background:var(--ac);color:var(--on);box-shadow:0 0 18px #22d3eeaa}#cmp{width:56px;height:56px}#cmp svg{width:40px;height:40px}
+#deg{font:700 11px ui-monospace,monospace;background:#0a1220e0;color:var(--ac);border:1px solid #22d3ee50;border-radius:8px;padding:2px 7px}
+#bot{position:absolute;left:10px;right:10px;bottom:10px;display:flex;flex-direction:column;gap:8px;z-index:3}
+#hud{display:grid;grid-template-columns:1.25fr 1.25fr .8fr 1fr;border-radius:16px;padding:8px 6px}
+#hud div{text-align:center;border-right:1px solid #22d3ee22}#hud div:last-child{border:0}
+#hud small{display:block;font:600 9px ui-monospace,monospace;letter-spacing:.14em;color:var(--mut)}#hud b{font:600 13px ui-monospace,monospace;color:var(--ac)}
+nav{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;border-radius:24px;padding:6px 4px 8px}
+nav button{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;color:#a9c3d6;font:600 10.5px system-ui;letter-spacing:.04em;padding:6px 0;border-radius:12px;cursor:pointer}
+nav button.on{color:var(--rd);animation:pl 1.2s infinite}@keyframes pl{50%{text-shadow:0 0 12px var(--rd);opacity:.6}}
+nav .fab{width:62px;height:62px;border-radius:50%;margin:-26px auto 0;padding:0;justify-content:center;background:linear-gradient(135deg,#22d3ee,#3b82f6);color:var(--on);box-shadow:0 0 22px #22d3ee99,0 6px 16px #000a;border:3px solid #0a1220}
+nav .fab svg{width:30px;height:30px;stroke-width:2.4}
+.b{border:0;border-radius:12px;padding:12px 14px;font:650 14px system-ui;background:linear-gradient(135deg,#22d3ee,#3b82f6);color:var(--on);cursor:pointer}
+.b.g{background:transparent;color:var(--fg);border:1px solid var(--bd)}.b.d{background:var(--rd);color:#fff}.b:disabled{opacity:.35}
+#modal{position:fixed;inset:0;background:#02060cb0;backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;z-index:9}#modal[hidden]{display:none}
+.card{background:var(--card);border:1px solid #22d3ee40;border-bottom:0;box-shadow:0 -8px 30px #22d3ee22;width:100%;max-width:480px;max-height:85%;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px;display:flex;flex-direction:column;gap:10px}
+.card h3{margin:0;font-size:16px;letter-spacing:.04em}label{display:flex;flex-direction:column;gap:4px;font:600 11px ui-monospace,monospace;letter-spacing:.08em;color:var(--mut);text-transform:uppercase}
+input,select,textarea{font:15px system-ui;padding:11px;border-radius:11px;border:1px solid var(--bd);background:var(--bg);color:var(--fg);text-transform:none;letter-spacing:0}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 2px #22d3ee33}
+.row{display:flex;gap:8px}.row .b{flex:1}
+.it{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid var(--bd);background:#0a1220;color:var(--fg);border-radius:12px;padding:10px 12px;font:inherit;text-align:left;cursor:pointer}.it small{color:var(--mut)}
+#toast{position:fixed;left:50%;bottom:170px;transform:translateX(-50%);background:#0a1220f0;color:var(--fg);border:1px solid #22d3ee55;padding:10px 15px;border-radius:14px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:10;max-width:90%;text-align:center;box-shadow:0 0 18px #22d3ee33}
+</style><meta name="color-scheme" content="dark"></head><body>
+<div id="stage"><canvas id="cv"></canvas><div id="cross"><i></i><i></i><i></i><i></i></div></div>
+<header class="gl"><label class="ib" title="Impor PDF"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><input id="f" type="file" accept="application/pdf" hidden></label><div class="ti"><div id="mt">PetaTag</div><div id="st">IMPOR PDF PETA</div></div><div id="gb">GPS</div></header>
+<div id="ctl"><button class="c" id="cmp" onclick="compass()" aria-label="Kompas"><svg id="dial" viewBox="0 0 40 40" style="transition:transform .15s"><circle cx="20" cy="20" r="17" stroke-width="1.5" opacity=".6"/><path id="needle" d="M20 5l5 15h-10z" fill="#f43f5e" stroke="none"/><path d="M20 35l-5-15h10z" fill="currentColor" opacity=".45" stroke="none"/></svg></button><div id="deg" hidden></div>
+<button class="c" id="loc" onclick="locate()" aria-label="Lokasi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button><button class="c" onclick="zoom(1.5)">+</button><button class="c" onclick="zoom(1/1.5)">−</button></div>
+<div id="bot"><div id="hud" class="gl"><div><small>LAT</small><b id="la">—</b></div><div><small>LON</small><b id="lo">—</b></div><div><small>ARAH</small><b id="hd">—</b></div><div><small>AKURASI</small><b id="ac">—</b></div></div>
+<nav class="gl"><button id="brec" onclick="rec()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>Rekam</button><button onclick="listDlg()"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></svg>Daftar</button><button class="fab" onclick="tagDlg()" aria-label="Tambah tag"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button onclick="startCal()"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2"/></svg>Kalibrasi</button><button onclick="expDlg()"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 9l5-5 5 5M5 20h14"/></svg>Ekspor</button></nav></div>
+<div id="modal" hidden></div><div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),cv=$('#cv');
+let S={tags:[],tracks:[],cal:null,img:null},v={x:0,y:0,k:1},W=0,H=0,pos=null,heading=null,comp=false,watch=null,cur=null,calMode=0,cp=[];
+try{const d=JSON.parse(localStorage.getItem('pt')||'{}');S.tags=d.tags||[];S.tracks=d.tracks||[]}catch(e){}
+const persist=()=>{try{localStorage.setItem('pt',JSON.stringify({tags:S.tags,tracks:S.tracks}))}catch(e){}};
+function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity=1;clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity=0,2800)}
+function dlg(h){const m=$('#modal');m.innerHTML='<div class="card">'+h+'</div>';m.hidden=false}
+function closeD(){$('#modal').hidden=true}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hav=(a,b)=>{const r=Math.PI/180,x=Math.sin((b[0]-a[0])*r/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin((b[1]-a[1])*r/2)**2;return 12742000*Math.asin(Math.sqrt(x))};
+/* kalibrasi: transformasi kemiripan (skala+rotasi) piksel <-> lat/lon dari 2 titik */
+function mkCal(p1,p2){const kx=111320*Math.cos((p1.lat+p2.lat)/2*Math.PI/180),ky=110540,z1=[p1.px,-p1.py],z2=[p2.px,-p2.py],m2=[(p2.lon-p1.lon)*kx,(p2.lat-p1.lat)*ky],dz=[z2[0]-z1[0],z2[1]-z1[1]],dd=dz[0]**2+dz[1]**2,a=[(m2[0]*dz[0]+m2[1]*dz[1])/dd,(m2[1]*dz[0]-m2[0]*dz[1])/dd],n=a[0]**2+a[1]**2;
+return{fwd:(la,lo)=>{const m=[(lo-p1.lon)*kx,(la-p1.lat)*ky],q=[(m[0]*a[0]+m[1]*a[1])/n,(m[1]*a[0]-m[0]*a[1])/n];return[z1[0]+q[0],-(z1[1]+q[1])]},
+inv:(px,py)=>{const q=[px-z1[0],-py-z1[1]],m=[a[0]*q[0]-a[1]*q[1],a[0]*q[1]+a[1]*q[0]];return[p1.lat+m[1]/ky,p1.lon+m[0]/kx]}}}
+const tagPx=t=>t.px!=null?[t.px,t.py]:(S.cal&&t.lat!=null?S.cal.fwd(t.lat,t.lon):null);
+const tl=t=>t.lat!=null?[t.lat,t.lon]:(S.cal&&t.px!=null?S.cal.inv(t.px,t.py):null);
+const sc=p=>[v.x+p[0]*v.k,v.y+p[1]*v.k];
+function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;draw()}
+function chip(){let s=S.img?(S.cal?'● TERKALIBRASI':'○ BELUM DIKALIBRASI'):'IMPOR PDF PETA';if(cur)s+=' · REC '+Math.round(dist(cur.pts))+' M';const e=$('#st');e.textContent=s;e.classList.toggle('ok',!!S.cal);$('#la').textContent=pos?pos.lat.toFixed(6):'—';$('#lo').textContent=pos?pos.lon.toFixed(6):'—';$('#hd').textContent=heading!=null?Math.round(heading)+'°':'—';$('#ac').textContent=pos?'±'+Math.round(pos.acc)+' m':'—';$('#gb').classList.toggle('on',!!pos);$('#loc').classList.toggle('on',!!pos)}
+const dist=p=>p.reduce((s,q,i)=>i?s+hav(p[i-1],q):0,0);
+function draw(){const c=cv.getContext('2d'),d=devicePixelRatio||1;c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+if(S.img){c.save();c.translate(v.x,v.y);c.scale(v.k,v.k);c.fillStyle='#fff';c.fillRect(0,0,S.img.width,S.img.height);c.drawImage(S.img,0,0);c.restore()}
+if(S.cal)for(const t of S.tracks.concat(cur?[cur]:[])){c.beginPath();c.strokeStyle='#22d3ee';c.shadowColor='#22d3ee';c.shadowBlur=8;c.lineWidth=4;c.lineJoin='round';t.pts.forEach((p,i)=>{const s=sc(S.cal.fwd(p[0],p[1]));i?c.lineTo(s[0],s[1]):c.moveTo(s[0],s[1])});c.stroke();c.shadowBlur=0}
+c.font='600 12px system-ui';c.textBaseline='middle';
+for(const t of S.tags){const p=tagPx(t);if(!p)continue;const s=sc(p);c.beginPath();c.moveTo(s[0],s[1]);c.bezierCurveTo(s[0]-14,s[1]-14,s[0]-11,s[1]-30,s[0],s[1]-30);c.bezierCurveTo(s[0]+11,s[1]-30,s[0]+14,s[1]-14,s[0],s[1]);c.fillStyle='#f43f5e';c.shadowColor='#000a';c.shadowBlur=6;c.fill();c.shadowBlur=0;c.lineWidth=2;c.strokeStyle='#fff';c.stroke();c.beginPath();c.arc(s[0],s[1]-19,3.5,0,7);c.fillStyle='#fff';c.fill();const tw=c.measureText(t.name).width+12;c.fillStyle='#060b14e0';c.beginPath();c.roundRect(s[0]+12,s[1]-32,tw,19,6);c.fill();c.fillStyle='#e0f7ff';c.fillText(t.name,s[0]+18,s[1]-22)}
+for(const q of cp){if(q.px==null)continue;const s=sc([q.px,q.py]);c.strokeStyle='#f59e0b';c.lineWidth=3;c.strokeRect(s[0]-8,s[1]-8,16,16)}
+if(pos&&S.cal){const s=sc(S.cal.fwd(pos.lat,pos.lon));if(comp&&heading!=null){const a=(heading-90)*Math.PI/180;c.beginPath();c.moveTo(s[0],s[1]);c.arc(s[0],s[1],42,a-.55,a+.55);c.closePath();c.fillStyle='#22d3ee55';c.fill()}
+c.beginPath();c.arc(s[0],s[1],22,0,7);c.fillStyle='#22d3ee22';c.fill();c.beginPath();c.arc(s[0],s[1],8,0,7);c.fillStyle='#22d3ee';c.shadowColor='#22d3ee';c.shadowBlur=12;c.fill();c.shadowBlur=0;c.lineWidth=3;c.strokeStyle='#fff';c.stroke()}
+if(!S.img){c.fillStyle='#7dd3fc';c.font='600 15px system-ui';c.textAlign='center';c.fillText('Ketuk ikon folder untuk impor peta PDF',W/2,H/2);c.textAlign='left'}
+chip()}
+function fit(){if(!S.img)return;v.k=Math.min(W/S.img.width,H/S.img.height);v.x=(W-S.img.width*v.k)/2;v.y=(H-S.img.height*v.k)/2;draw()}
+function zoom(f,cx=W/2,cy=H/2){const nk=Math.min(15,Math.max(.03,v.k*f)),r=nk/v.k;v.x=cx-(cx-v.x)*r;v.y=cy-(cy-v.y)*r;v.k=nk;draw()}
+/* gestur */
+const P=new Map();let d0=0,mv=0,t0=0;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);P.set(e.pointerId,[e.clientX,e.clientY]);mv=0;t0=Date.now();if(P.size==2){const a=[...P.values()];d0=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}});
+cv.addEventListener('pointermove',e=>{if(!P.has(e.pointerId))return;const o=P.get(e.pointerId),r=cv.getBoundingClientRect();
+if(P.size==1){v.x+=e.clientX-o[0];v.y+=e.clientY-o[1];mv+=Math.abs(e.clientX-o[0])+Math.abs(e.clientY-o[1])}
+P.set(e.pointerId,[e.clientX,e.clientY]);
+if(P.size==2){const a=[...P.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);mv+=99;if(d0)zoom(d/d0,(a[0][0]+a[1][0])/2-r.left,(a[0][1]+a[1][1])/2-r.top);d0=d}draw()});
+cv.addEventListener('pointerup',e=>{const was=P.size==1&&mv<8&&Date.now()-t0<400;P.delete(e.pointerId);if(was)tap(e)});
+cv.addEventListener('pointercancel',e=>P.delete(e.pointerId));
+cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();zoom(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top)},{passive:false});
+function tap(e){const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+if(calMode){cp[calMode-1]={px:(x-v.x)/v.k,py:(y-v.y)/v.k};draw();return calDlg(calMode)}
+let b=null,bd=26;S.tags.forEach(t=>{const p=tagPx(t);if(!p)return;const s=sc(p),d=Math.hypot(s[0]-x,s[1]-y);if(d<bd){bd=d;b=t}});if(b)tagDlg(b)}
+/* PDF */
+$('#f').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(!window.pdfjsLib)return toast('Pustaka PDF gagal dimuat (cek internet)');
+try{toast('Memuat PDF…');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const buf=await f.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:buf.slice(0)}).promise,pg=await pdf.getPage(1),v0=pg.getViewport({scale:1}),vp=pg.getViewport({scale:Math.min(5,4096/Math.max(v0.width,v0.height))}),c=document.createElement('canvas');
+c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;S.img=c;$('#mt').textContent=f.name.replace(/\.pdf$/i,'');S.cal=null;cp=[];$('#cross').style.display='block';
+try{const t=new TextDecoder('latin1').decode(new Uint8Array(buf)),g=t.match(/\/GPTS\s*\[([^\]]+)\]/),l=t.match(/\/LPTS\s*\[([^\]]+)\]/);
+if(g&&l){const G=g[1].trim().split(/\s+/).map(Number),L=l[1].trim().split(/\s+/).map(Number),i=G.length>=8?2:1,mk=k=>({lat:G[k*2],lon:G[k*2+1],px:L[k*2]*c.width,py:(1-L[k*2+1])*c.height});S.cal=mkCal(mk(0),mk(i));toast('GeoPDF terdeteksi — otomatis terkalibrasi')}}catch(x){}
+fit();if(!S.cal)toast('PDF dimuat. Kalibrasi 2 titik agar GPS tampil di peta')}catch(x){toast('Gagal membuka PDF')}};
+/* kalibrasi */
+function startCal(){if(!S.img)return toast('Impor PDF dulu');cp=[];calMode=1;toast('Ketuk titik referensi 1 pada peta')}
+function calDlg(n){dlg(`<h3>Koordinat titik ${n}</h3><label>Lat, Lon (desimal)<input id="cl" placeholder="-6.2000, 106.8166"></label><button class="b g" onclick="calGPS()">Pakai posisi GPS saat ini</button><div class="row"><button class="b" onclick="calOk(${n})">Lanjut</button><button class="b d" onclick="calMode=0;cp=[];closeD();draw()">Batal</button></div>`)}
+function calGPS(){if(!pos)return toast('GPS belum aktif — tekan Lokasi');$('#cl').value=pos.lat.toFixed(7)+', '+pos.lon.toFixed(7)}
+function calOk(n){const m=$('#cl').value.match(/-?\d+(\.\d+)?/g);if(!m||m.length<2)return toast('Format: lat, lon');cp[n-1].lat=+m[0];cp[n-1].lon=+m[1];closeD();
+if(n<2){calMode=2;toast('Ketuk titik referensi 2 (jauh dari titik 1)')}else{if(Math.hypot(cp[0].px-cp[1].px,cp[0].py-cp[1].py)<30)return toast('Titik terlalu dekat');S.cal=mkCal(cp[0],cp[1]);calMode=0;cp=[];toast('Terkalibrasi');draw()}}
+/* GPS & tracking */
+let inFrame=false;try{inFrame=window.top!==window}catch(x){inFrame=true}
+const gerr={1:'Izin lokasi ditolak. Izinkan Lokasi untuk situs ini (ikon gembok → Izin → Lokasi), lalu tekan Lokasi lagi.',2:'Posisi tidak tersedia. Nyalakan Lokasi/GPS di HP dan coba di tempat terbuka.',3:'GPS timeout. Coba di tempat terbuka.'};
+const ge=e=>(gerr[e.code]||e.message)+(inFrame&&e.code===1?' Anda sedang di pratinjau (iframe): buka sebagai PWA/tab sendiri.':'');
+let first=true;
+function onpos(p){pos={lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy};
+if(first){first=false;toast('GPS aktif ±'+Math.round(pos.acc)+' m'+(S.cal?'':' — kalibrasi agar titik tampil di peta'))}
+if(cur&&p.coords.accuracy<=50){const l=cur.pts[cur.pts.length-1];if(!l||hav(l,[pos.lat,pos.lon])>3)cur.pts.push([pos.lat,pos.lon,new Date().toISOString()])}draw()}
+function gps(){if(watch!=null)return;if(!navigator.geolocation)return toast('Browser tidak mendukung GPS');if(!isSecureContext)return toast('GPS butuh HTTPS');
+toast('Meminta posisi GPS…');first=true;
+navigator.geolocation.getCurrentPosition(onpos,e=>toast(ge(e)),{enableHighAccuracy:true,timeout:25000,maximumAge:0});
+watch=navigator.geolocation.watchPosition(onpos,e=>{if(e.code===1){navigator.geolocation.clearWatch(watch);watch=null}toast(ge(e))},{enableHighAccuracy:true,maximumAge:1000,timeout:40000})}
+function locate(){gps();if(pos&&S.cal){const s=sc(S.cal.fwd(pos.lat,pos.lon));v.x+=W/2-s[0];v.y+=H/2-s[1];draw()}else if(pos)toast('Kalibrasi peta agar posisi tampil')}
+function rec(){const b=$('#brec');if(cur){if(cur.pts.length>1)S.tracks.push(cur);toast('Track disimpan ('+Math.round(dist(cur.pts))+' m)');cur=null;persist();b.classList.remove('on')}else{gps();cur={name:'Track '+(S.tracks.length+1),pts:[]};if(pos)cur.pts.push([pos.lat,pos.lon,new Date().toISOString()]);b.classList.add('on');toast('Merekam track…')}draw()}
+/* kompas */
+let got=false,cto=null,asen=null;
+function stopComp(){removeEventListener('deviceorientationabsolute',oh,true);removeEventListener('deviceorientation',oh,true);clearTimeout(cto);try{asen&&asen.stop()}catch(x){}asen=null;comp=false;heading=null;$('#cmp').classList.remove('on');$('#deg').hidden=true;$('#dial').style.transform='';draw()}
+function noComp(m){stopComp();toast('Sensor kompas tidak mengirim data'+(m?' ('+m+')':'')+'. Cek: buka lewat HTTPS di luar pratinjau, izin "Sensor gerak" situs tidak diblokir, dan HP punya magnetometer.')}
+async function compass(){if(comp)return stopComp();if(!isSecureContext)return toast('Kompas butuh HTTPS');
+try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'&&await DeviceOrientationEvent.requestPermission()!=='granted')return toast('Izin sensor ditolak (Pengaturan → Safari → Gerakan & Orientasi)')}catch(x){return toast('Izin sensor gagal: '+x.message)}
+addEventListener('deviceorientationabsolute',oh,true);addEventListener('deviceorientation',oh,true);comp=true;got=false;$('#cmp').classList.add('on');$('#deg').hidden=false;$('#deg').textContent='…';toast('Kompas aktif. Gerakkan HP membentuk angka 8 untuk kalibrasi');
+cto=setTimeout(()=>{if(!got)trySensor()},1500)}
+function trySensor(){if(!window.AbsoluteOrientationSensor)return noComp(inFrame?'iframe':'');
+try{asen=new AbsoluteOrientationSensor({frequency:30,referenceFrame:'screen'});asen.onreading=()=>{const[x,y,z,w]=asen.quaternion;setH((360-Math.atan2(2*(w*z+x*y),1-2*(y*y+z*z))*180/Math.PI+360)%360)};asen.onerror=e=>noComp(e.error&&e.error.name);asen.start();cto=setTimeout(()=>{if(!got)noComp()},2500)}catch(x){noComp(x.name)}}
+function setH(h){got=true;heading=heading==null?h:(heading+((h-heading+540)%360-180)*.35+360)%360;$('#dial').style.transform='rotate('+(-heading)+'deg)';$('#deg').textContent=Math.round(heading)+'° '+['U','TL','T','TG','S','BD','B','BL'][Math.round(heading/45)%8];draw()}
+function oh(e){if(e.webkitCompassHeading!=null)return setH(e.webkitCompassHeading);
+if(e.alpha==null||!(e.absolute||e.type==='deviceorientationabsolute'))return;const ang=screen.orientation?screen.orientation.angle:0;let h;
+if(Math.abs(e.beta||0)<35&&Math.abs(e.gamma||0)<35)h=360-e.alpha+ang;
+else{const r=Math.PI/180,a=e.alpha*r,b=e.beta*r,g=(e.gamma||0)*r,rA=-Math.cos(a)*Math.sin(g)-Math.sin(a)*Math.sin(b)*Math.cos(g),rB=-Math.sin(a)*Math.sin(g)+Math.cos(a)*Math.sin(b)*Math.cos(g);h=Math.atan2(rA,rB)/r;h+=ang}
+setH(((h%360)+360)%360)}
+/* tag */
+function tagDlg(t){const cats=['Umum','Temuan','Titik Ukur','Bahaya','Fasilitas'],i=t?S.tags.indexOf(t):-1;
+dlg(`<h3>${t?'Edit Tag':'Tag Baru'}</h3><label>Nama<input id="tn" value="${esc(t?t.name:'Tag '+(S.tags.length+1))}"></label><label>Kategori<select id="tc">${cats.map(c=>`<option ${t&&t.cat===c?'selected':''}>${c}</option>`).join('')}</select></label><label>Catatan<textarea id="tt" rows="3">${esc(t?t.note:'')}</textarea></label>`+
+(t?`<div class="row"><button class="b" onclick="tagSave(${i})">Simpan</button><button class="b d" onclick="S.tags.splice(${i},1);persist();closeD();draw()">Hapus</button></div>`:`<div class="row"><button class="b" onclick="tagNew('c')">Di crosshair</button><button class="b" onclick="tagNew('g')" ${pos?'':'disabled'}>Di posisi GPS</button></div>`)+`<button class="b g" onclick="closeD()">Tutup</button>`)}
+const tf=()=>({name:$('#tn').value||'Tag',cat:$('#tc').value,note:$('#tt').value});
+function tagSave(i){Object.assign(S.tags[i],tf());persist();closeD();draw()}
+function tagNew(src){const t=Object.assign(tf(),{time:new Date().toISOString()});
+if(src==='c'){if(!S.img)return toast('Impor PDF dulu');t.px=(W/2-v.x)/v.k;t.py=(H/2-v.y)/v.k;if(S.cal){const l=S.cal.inv(t.px,t.py);t.lat=l[0];t.lon=l[1]}}
+else{t.lat=pos.lat;t.lon=pos.lon;if(!S.cal)toast('Tersimpan (belum terkalibrasi, belum tampil di peta)')}
+S.tags.push(t);persist();closeD();draw()}
+function listDlg(){dlg(`<h3>DAFTAR TAG (${S.tags.length})</h3>`+(S.tags.length?S.tags.map((t,i)=>`<button class="it" onclick="goTag(${i})"><b>${esc(t.name)}</b><small>${esc(t.cat)} · ${esc(t.note||'—')}</small></button>`).join(''):'<div style="color:var(--mut)">Belum ada tag. Tekan tombol + untuk menaruh tag.</div>')+`<button class="b g" onclick="closeD()">Tutup</button>`)}
+function goTag(i){closeD();const p=tagPx(S.tags[i]);if(!p)return toast('Tag belum punya posisi di peta (kalibrasi dulu)');v.x=W/2-p[0]*v.k;v.y=H/2-p[1]*v.k;draw();tagDlg(S.tags[i])}
+/* ekspor */
+const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"',f7=n=>n==null?'':n.toFixed(7);
+const F={csv:{n:'CSV Tag (Excel)',ext:'csv',mime:'text/csv',fn:()=>'\ufeffno,nama,kategori,catatan,lat,lon,waktu\n'+S.tags.map((t,i)=>{const l=tl(t)||[];return[i+1,q(t.name),q(t.cat),q(t.note),f7(l[0]),f7(l[1]),t.time].join(',')}).join('\n')},
+trk:{n:'CSV Track',ext:'csv',mime:'text/csv',fn:()=>'track,lat,lon,waktu\n'+S.tracks.map(t=>t.pts.map(p=>[q(t.name),p[0].toFixed(7),p[1].toFixed(7),p[2]].join(',')).join('\n')).join('\n')},
+geo:{n:'GeoJSON',ext:'geojson',mime:'application/geo+json',fn:()=>JSON.stringify({type:'FeatureCollection',features:S.tags.map(t=>({t,l:tl(t)})).filter(x=>x.l).map(x=>({type:'Feature',properties:{nama:x.t.name,kategori:x.t.cat,catatan:x.t.note,waktu:x.t.time},geometry:{type:'Point',coordinates:[x.l[1],x.l[0]]}})).concat(S.tracks.map(t=>({type:'Feature',properties:{nama:t.name},geometry:{type:'LineString',coordinates:t.pts.map(p=>[p[1],p[0]])}})))},null,1)},
+gpx:{n:'GPX',ext:'gpx',mime:'application/gpx+xml',fn:()=>'<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="PetaTag" xmlns="http://www.topografix.com/GPX/1/1">\n'+S.tags.map(t=>({t,l:tl(t)})).filter(x=>x.l).map(x=>`<wpt lat="${x.l[0]}" lon="${x.l[1]}"><time>${x.t.time}</time><name>${esc(x.t.name)}</name><desc>${esc(x.t.note)}</desc><type>${esc(x.t.cat)}</type></wpt>`).join('\n')+'\n'+S.tracks.map(t=>`<trk><name>${esc(t.name)}</name><trkseg>${t.pts.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"><time>${p[2]}</time></trkpt>`).join('')}</trkseg></trk>`).join('\n')+'\n</gpx>'},
+kml:{n:'KML (Google Earth)',ext:'kml',mime:'application/vnd.google-earth.kml+xml',fn:()=>'<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document>\n'+S.tags.map(t=>({t,l:tl(t)})).filter(x=>x.l).map(x=>`<Placemark><name>${esc(x.t.name)}</name><description>${esc(x.t.cat+': '+x.t.note)}</description><Point><coordinates>${x.l[1]},${x.l[0]},0</coordinates></Point></Placemark>`).join('\n')+'\n'+S.tracks.map(t=>`<Placemark><name>${esc(t.name)}</name><LineString><coordinates>${t.pts.map(p=>p[1]+','+p[0]+',0').join(' ')}</coordinates></LineString></Placemark>`).join('\n')+'\n</Document></kml>'}};
+function expDlg(){dlg(`<h3>Ekspor</h3><div style="color:var(--mut);font-size:13px">${S.tags.length} tag · ${S.tracks.length} track${S.cal?'':' · koordinat tag dari peta butuh kalibrasi'}</div><label>Format<select id="ef">${Object.entries(F).map(([k,x])=>`<option value="${k}">${x.n}</option>`).join('')}</select></label><div class="row"><button class="b" onclick="out(0)">Bagikan / Unduh</button><button class="b g" onclick="out(1)">Salin</button></div><button class="b d" id="del" onclick="delAll()">Hapus semua data</button><button class="b g" onclick="closeD()">Tutup</button>`)}
+function delAll(){const b=$('#del');if(b.dataset.s){S.tags=[];S.tracks=[];persist();closeD();draw();return toast('Data dihapus')}b.dataset.s=1;b.textContent='Ketuk lagi untuk konfirmasi'}
+async function out(copy){const f=F[$('#ef').value],txt=f.fn(),name='petatag-'+new Date().toISOString().slice(0,10)+'.'+f.ext;
+if(copy){try{await navigator.clipboard.writeText(txt);toast('Disalin')}catch(e){toast('Gagal menyalin')}return}
+const file=new File([txt],name,{type:f.mime});
+try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return}}catch(e){if(e.name==='AbortError')return}
+const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Mengunduh '+name+' (jika tidak jalan, pakai Salin)')}
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+addEventListener('resize',size);new ResizeObserver(size).observe(cv);size();
+</script></body></html>
