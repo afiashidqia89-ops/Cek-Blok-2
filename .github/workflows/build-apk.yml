@@ -1,74 +1,21 @@
-name: Build Dompet Keluarga APK
+- name: Install dependencies
+  run: npm install --no-audit --no-fund
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-      - master
+- name: Create Android project
+  run: npx cap add android
 
-permissions:
-  contents: read
+- name: Generate Android icon
+  run: |
+    npx @capacitor/assets generate \
+      --android \
+      --iconBackgroundColor "#064e3b" \
+      --iconBackgroundColorDark "#064e3b"
 
-env:
-  APP_VERSION_CODE: 1
-  APP_VERSION_NAME: 1.0.0
+- name: Sync web application
+  run: npx cap sync android
 
-jobs:
-  build-debug-apk:
-    name: Build APK Dompet Keluarga
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: ''
-
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Create Android project
-        run: npx cap add android
-
-      - name: Sync web application
-        run: npx cap sync android
-
-      - name: Set application version
-        run: |
-          sed -i "s/versionCode [0-9][0-9]*/versionCode $APP_VERSION_CODE/" android/app/build.gradle
-          sed -i "s/versionName \"[^\"]*\"/versionName \"$APP_VERSION_NAME\"/" android/app/build.gradle
-
-      - name: Build debug APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
-
-      - name: Rename APK
-        run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk \
-          Dompet-Keluarga-${APP_VERSION_NAME}-debug.apk
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Dompet-Keluarga-${{ env.APP_VERSION_NAME }}-APK
-          path: Dompet-Keluarga-${{ env.APP_VERSION_NAME }}-debug.apk
-          if-no-files-found: error
-          retention-days: 30
+- name: Build APK
+  run: |
+    cd android
+    chmod +x gradlew
+    ./gradlew assembleDebug --no-daemon
