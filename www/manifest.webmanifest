@@ -1,0 +1,9 @@
+{
+  "name": "Dompet Keluarga",
+  "short_name": "Dompet",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ecfdf5",
+  "theme_color": "#064e3b",
+  "description": "Aplikasi pencatatan dan sinkronisasi keuangan keluarga"
+}
