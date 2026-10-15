@@ -16,6 +16,7 @@ env:
 
 jobs:
   build-debug-apk:
+    name: Build APK Dompet Keluarga
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
