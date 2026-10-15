@@ -1,8 +1,8 @@
 {
-  "name": "dompet-keluarga",
+  "name": "Dompet",
   "version": "1.0.0",
   "private": true,
-  "description": "Aplikasi keuangan keluarga bersama",
+  "description": "Aplikasi keuangan keluarga",
   "scripts": {
     "android:add": "cap add android",
     "android:sync": "cap sync android",
