@@ -1,5 +1,5 @@
 {
-  "name": "Dompet Keluarga",
+  "name": "MyDompet",
   "short_name": "Dompet",
   "start_url": "./index.html",
   "display": "standalone",
