@@ -6,14 +6,13 @@ on:
     branches:
       - main
       - master
-    paths:
-      - 'www/**'
-      - 'package.json'
-      - 'capacitor.config.json'
-      - '.github/workflows/build-apk.yml'
 
 permissions:
   contents: read
+
+env:
+  APP_VERSION_CODE: 1
+  APP_VERSION_NAME: 1.0.0
 
 jobs:
   build-debug-apk:
@@ -36,7 +35,9 @@ jobs:
           java-version: '21'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ''
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
@@ -47,21 +48,26 @@ jobs:
       - name: Sync web application
         run: npx cap sync android
 
+      - name: Set application version
+        run: |
+          sed -i "s/versionCode [0-9][0-9]*/versionCode $APP_VERSION_CODE/" android/app/build.gradle
+          sed -i "s/versionName \"[^\"]*\"/versionName \"$APP_VERSION_NAME\"/" android/app/build.gradle
+
       - name: Build debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Rename APK
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk \
-          Dompet-Keluarga-debug.apk
+          Dompet-Keluarga-${APP_VERSION_NAME}-debug.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dompet-Keluarga-APK
-          path: Dompet-Keluarga-debug.apk
+          name: Dompet-Keluarga-${{ env.APP_VERSION_NAME }}-APK
+          path: Dompet-Keluarga-${{ env.APP_VERSION_NAME }}-debug.apk
           if-no-files-found: error
           retention-days: 30
