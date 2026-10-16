@@ -1,6 +1,6 @@
 {
   "appId": "id.plantdigital.dompetkeluarga",
-  "appName": "Dompet Keluarga",
+  "appName": "MySaku",
   "webDir": "www",
   "android": {
     "allowMixedContent": false,
