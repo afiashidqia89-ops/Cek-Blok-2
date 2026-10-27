@@ -1,0 +1,2 @@
+import { NextRequest, NextResponse } from 'next/server'; import { prisma } from '@/lib/prisma';
+export async function GET(req:NextRequest){const q=req.nextUrl.searchParams.get('q')?.trim()||'';const limit=Math.min(100,Math.max(1,Number(req.nextUrl.searchParams.get('limit'))||25));const data=await prisma.blok.findMany({where:q?{OR:[{kode:{contains:q,mode:'insensitive'}},{estate:{contains:q,mode:'insensitive'}}]}:{},take:limit,orderBy:{kode:'asc'}});return NextResponse.json({data,count:data.length})}

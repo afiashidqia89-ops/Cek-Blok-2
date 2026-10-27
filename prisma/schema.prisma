@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Blok {
+  id           String   @id @default(cuid())
+  estate       String
+  kebun        String
+  afdeling     String
+  kode         String
+  luasHa       Decimal  @db.Decimal(12, 2)
+  jumlahPokok  Int
+  status       StatusBlok @default(AKTIF)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@unique([estate, kebun, afdeling, kode])
+  @@index([estate, kebun, afdeling])
+  @@index([kode])
+}
+
+enum StatusBlok {
+  AKTIF
+  DATA_KOSONG
+  NONAKTIF
+}
